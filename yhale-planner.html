@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>YHALE Coordinator Planner 2026–27</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #1a2744;
+    --gold: #c9a84c;
+    --gold-light: #f0e4c0;
+    --cream: #faf8f4;
+    --white: #ffffff;
+    --border: #e2ddd4;
+    --text: #1a2744;
+    --text-muted: #7a7a8a;
+    --blue-bg: #e8eef8;
+    --blue-text: #1a3a7a;
+    --green-bg: #e6f4ed;
+    --green-text: #1a5c38;
+    --amber-bg: #fdf3e0;
+    --amber-text: #7a4a00;
+    --rose-bg: #fce8ef;
+    --rose-text: #7a1a3a;
+    --teal-bg: #e0f4f0;
+    --teal-text: #0a4a40;
+    --gray-bg: #f0eeea;
+    --gray-text: #4a4a5a;
+    --purple-bg: #ede8f8;
+    --purple-text: #3a2a7a;
+    --sage-bg: #dff0e8;
+    --sage-text: #0F6E56;
+    --violet-bg: #f0eeff;
+    --violet-text: #3a2870;
+    --red: #c0392b;
+    --shadow: 0 2px 12px rgba(26,39,68,0.08);
+    --shadow-lg: 0 8px 32px rgba(26,39,68,0.12);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--cream);
+    color: var(--text);
+    min-height: 100vh;
+  }
+  /* Header */
+  .site-header {
+    background: var(--navy);
+    padding: 1.5rem 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+  .site-header h1 {
+    font-family: 'DM Serif Display', serif;
+    color: var(--white);
+    font-size: 22px;
+    font-weight: 400;
+    letter-spacing: 0.01em;
+  }
+  .site-header h1 span { color: var(--gold); }
+  .header-meta {
+    font-size: 12px;
+    color: rgba(255,255,255,0.6);
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  .header-meta span { display: flex; align-items: center; gap: 5px; }
+  .ga-pill {
+    display: inline-block; font-size: 9px; padding: 2px 6px;
+    border-radius: 3px; background: #f8d7da; color: #8a1a1a;
+    border: 0.5px solid #f09595; font-weight: 600; vertical-align: middle;
+  }
+  /* Progress bar */
+  .progress-strip {
+    background: var(--navy);
+    padding: 0 2rem 1rem;
+    display: flex; gap: 12px; flex-wrap: wrap;
+  }
+  .prog-card {
+    background: rgba(255,255,255,0.08);
+    border-radius: 8px; padding: 10px 16px;
+    flex: 1; min-width: 100px;
+    border: 0.5px solid rgba(255,255,255,0.12);
+  }
+  .prog-label { font-size: 10px; color: rgba(255,255,255,0.5); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 4px; }
+  .prog-val { font-size: 22px; font-weight: 500; color: var(--white); }
+  .prog-val.gold { color: var(--gold); }
+  .prog-bar-wrap { height: 4px; background: rgba(255,255,255,0.15); border-radius: 2px; margin-top: 6px; overflow: hidden; }
+  .prog-bar-fill { height: 100%; background: var(--gold); border-radius: 2px; transition: width 0.4s ease; }
+  /* Legend */
+  .legend {
+    padding: 0.75rem 2rem;
+    background: var(--white);
+    border-bottom: 1px solid var(--border);
+    display: flex; gap: 10px; flex-wrap: wrap; align-items: center;
+  }
+  .leg-item { display: flex; align-items: center; gap: 5px; font-size: 11px; color: var(--text-muted); }
+  .leg-dot { width: 8px; height: 8px; border-radius: 2px; flex-shrink: 0; }
+  /* Quarter tabs */
+  .tabs-wrap {
+    padding: 1.25rem 2rem 0;
+    display: flex; gap: 8px; flex-wrap: wrap;
+  }
+  .qtab {
+    padding: 8px 20px;
+    border-radius: 8px 8px 0 0;
+    border: 1px solid var(--border);
+    border-bottom: none;
+    background: var(--white);
+    font-size: 13px; font-family: 'DM Sans', sans-serif;
+    color: var(--text-muted); cursor: pointer;
+    transition: all 0.15s;
+    font-weight: 400;
+  }
+  .qtab:hover:not(.active) { background: var(--gold-light); color: var(--navy); }
+  .qtab.active {
+    background: var(--navy); color: var(--white);
+    font-weight: 500; border-color: var(--navy);
+  }
+  /* Main content */
+  .main { padding: 0 2rem 2rem; }
+  .q-focus {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-top: 3px solid var(--gold);
+    border-radius: 0 8px 0 0;
+    padding: 10px 16px;
+    font-size: 12px; color: var(--text-muted);
+    font-style: italic;
+    margin-bottom: 1.25rem;
+  }
+  /* Month grid */
+  .months-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 14px;
+  }
+  .month-col {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: var(--shadow);
+  }
+  .month-header {
+    background: var(--navy);
+    padding: 10px 14px;
+  }
+  .month-name {
+    font-family: 'DM Serif Display', serif;
+    font-size: 16px; font-weight: 400;
+    color: var(--white); margin-bottom: 2px;
+  }
+  .month-sub { font-size: 10px; color: rgba(255,255,255,0.55); line-height: 1.4; }
+  .mtg-pills {
+    display: flex; gap: 5px; flex-wrap: wrap;
+    padding: 7px 14px;
+    background: var(--gold-light);
+    border-bottom: 1px solid var(--border);
+  }
+  .mtg-pill {
+    font-size: 10px; padding: 2px 8px; border-radius: 20px; font-weight: 500;
+  }
+  .mpb { background: var(--purple-bg); color: var(--purple-text); }
+  .mpa { background: var(--sage-bg); color: var(--sage-text); }
+  .tasks-wrap { padding: 10px 12px; }
+  /* Task item */
+  .task-item {
+    display: flex; align-items: flex-start; gap: 9px;
+    margin-bottom: 9px; cursor: pointer;
+    padding: 6px 8px; border-radius: 6px;
+    transition: background 0.1s;
+  }
+  .task-item:hover { background: var(--cream); }
+  .task-cb {
+    width: 16px; height: 16px; border-radius: 4px;
+    border: 1.5px solid #ccc; flex-shrink: 0; margin-top: 1px;
+    position: relative; transition: all 0.15s;
+  }
+  .task-cb.done { background: #2ecc71; border-color: #2ecc71; }
+  .task-cb.done::after {
+    content: ''; position: absolute;
+    width: 9px; height: 5px;
+    border-left: 2px solid white; border-bottom: 2px solid white;
+    transform: rotate(-45deg); top: 3px; left: 2px;
+  }
+  .task-body { flex: 1; min-width: 0; }
+  .task-badges { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 3px; align-items: center; }
+  .badge {
+    display: inline-block; font-size: 10px; padding: 1px 7px;
+    border-radius: 4px; font-weight: 500;
+  }
+  .badge-esol { background: var(--blue-bg); color: var(--blue-text); }
+  .badge-ela  { background: var(--green-bg); color: var(--green-text); }
+  .badge-pd   { background: var(--amber-bg); color: var(--amber-text); }
+  .badge-data { background: var(--rose-bg); color: var(--rose-text); }
+  .badge-family { background: var(--teal-bg); color: var(--teal-text); }
+  .badge-sched { background: var(--gray-bg); color: var(--gray-text); }
+  .badge-board { background: var(--purple-bg); color: var(--purple-text); }
+  .badge-acad  { background: var(--sage-bg); color: var(--sage-text); }
+  .badge-mtg   { background: var(--violet-bg); color: var(--violet-text); }
+  .badge-ga {
+    font-size: 9px; padding: 1px 5px; border-radius: 3px;
+    background: #f8d7da; color: #8a1a1a;
+    border: 0.5px solid #f09595; font-weight: 600;
+  }
+  .badge-deadline { font-size: 10px; color: var(--red); font-weight: 600; }
+  .task-text { font-size: 12.5px; color: var(--text); line-height: 1.5; }
+  .task-text.done { text-decoration: line-through; color: var(--text-muted); }
+  /* Add row */
+  .add-row {
+    display: flex; gap: 6px; padding: 8px 12px;
+    border-top: 1px solid var(--border);
+    background: var(--cream);
+  }
+  .add-row input {
+    flex: 1; font-size: 12px; padding: 5px 8px;
+    border: 1px solid var(--border); border-radius: 6px;
+    background: var(--white); color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+  }
+  .add-row input:focus { outline: none; border-color: var(--navy); }
+  .add-row select {
+    font-size: 11px; padding: 5px 4px;
+    border: 1px solid var(--border); border-radius: 6px;
+    background: var(--white); color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+  }
+  .add-row button {
+    padding: 5px 12px; border-radius: 6px;
+    border: 1px solid var(--navy);
+    background: var(--navy); color: var(--white);
+    font-size: 14px; cursor: pointer; font-family: 'DM Sans', sans-serif;
+    transition: background 0.15s;
+  }
+  .add-row button:hover { background: #2a3a60; }
+  /* Footer */
+  .site-footer {
+    text-align: center; padding: 1.5rem;
+    font-size: 11px; color: var(--text-muted);
+    border-top: 1px solid var(--border);
+    background: var(--white);
+    margin-top: 2rem;
+  }
+  /* Responsive */
+  @media(max-width: 900px) { .months-grid { grid-template-columns: repeat(2,1fr); } }
+  @media(max-width: 600px) { .months-grid { grid-template-columns: 1fr; } .main,.tabs-wrap,.progress-strip,.legend { padding-left: 1rem; padding-right: 1rem; } .site-header { padding: 1rem; } }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <h1>YI HWANG ACADEMY <span>Coordinator Planner</span> — 2026–27</h1>
+  <div class="header-meta">
+    <span>Board: 1st Thursday @ 6:30pm</span>
+    <span>Academic Cmte: 4th Thursday @ 6:30pm</span>
+    <span><span class="ga-pill">GA</span> = GaDOE requirement</span>
+  </div>
+</header>
+
+<div class="progress-strip" id="progStrip"></div>
+
+<div class="legend">
+  <span class="leg-item"><span class="leg-dot" style="background:#185FA5"></span>ESOL compliance</span>
+  <span class="leg-item"><span class="leg-dot" style="background:#1a5c38"></span>ELA curriculum</span>
+  <span class="leg-item"><span class="leg-dot" style="background:#7a4a00"></span>Coaching & PD</span>
+  <span class="leg-item"><span class="leg-dot" style="background:#7a1a3a"></span>Assessments & data</span>
+  <span class="leg-item"><span class="leg-dot" style="background:#0a4a40"></span>Family engagement</span>
+  <span class="leg-item"><span class="leg-dot" style="background:#4a4a5a"></span>Scheduling</span>
+  <span class="leg-item"><span class="leg-dot" style="background:#3a2a7a"></span>Board prep</span>
+  <span class="leg-item"><span class="leg-dot" style="background:#0F6E56"></span>Academic cmte</span>
+  <span class="leg-item"><span class="leg-dot" style="background:#3a2870"></span>Meetings setup</span>
+</div>
+
+<div class="tabs-wrap" id="tabsWrap"></div>
+<div class="main">
+  <div class="q-focus" id="qFocus"></div>
+  <div class="months-grid" id="monthsGrid"></div>
+</div>
+
+<footer class="site-footer">
+  YHALE — Yi Hwang Academy of Language Excellence &nbsp;·&nbsp; ESOL & ELA Coordinator Planner 2026–27 &nbsp;·&nbsp; Last updated April 2026
+</footer>
+
+<script>
+// ── Meeting date calculator ──────────────────────────────────────────────
+function nthThu(y,m,n){var d=new Date(y,m,1),dow=d.getDay(),first=(4-dow+7)%7;return 1+first+(n-1)*7;}
+var MTG={};
+[[2026,6,'July'],[2026,7,'August'],[2026,8,'September'],[2026,9,'October'],[2026,10,'November'],[2026,11,'December'],
+ [2027,0,'January'],[2027,1,'February'],[2027,2,'March'],[2027,3,'April'],[2027,4,'May'],[2027,5,'June'],[2027,6,'July']
+].forEach(function(r){MTG[r[2]]={b:nthThu(r[0],r[1],1),a:nthThu(r[0],r[1],4)};});
+
+// ── Categories ───────────────────────────────────────────────────────────
+var CAT={
+  esol:{l:'ESOL compliance',c:'badge-esol'},
+  ela: {l:'ELA curriculum', c:'badge-ela'},
+  pd:  {l:'Coaching & PD',  c:'badge-pd'},
+  data:{l:'Assessments & data',c:'badge-data'},
+  family:{l:'Family engagement',c:'badge-family'},
+  sched:{l:'Scheduling',    c:'badge-sched'},
+  board:{l:'Board prep',    c:'badge-board'},
+  acad:{l:'Academic cmte',  c:'badge-acad'},
+  mtg: {l:'Meetings setup', c:'badge-mtg'},
+};
+
+// ── Data ─────────────────────────────────────────────────────────────────
+var DATA=[
+ {q:1,lbl:'Pre-year & Q1',focus:'Pre-year prep (Jul 16), BOY assessments, demo lessons & 30-day EL compliance',months:[
+  {n:'July',d:'You start Jul 16 · New employee preplanning Jul 23–24 · All-staff preplanning Jul 27–31',t:[
+   {c:'sched',x:'Start July 16 — review master schedule and program structure for 2026–27'},
+   {c:'esol', x:'Update all exited ESOL students in Infinite Campus with exit date of 6/30/2026'},
+   {c:'esol', x:'Audit ESOL student rosters and service logs from prior year'},
+   {c:'ela',  x:'Review and update ELA curriculum maps; identify gaps or new standards'},
+   {c:'esol', x:'Confirm all WIDA TA certifications are current (July 1 renewal cycle)',ga:1},
+   {c:'esol', x:'Provide STC with updated list of educators needing WIDA Secure Portal & WIDA AMS access',ga:1},
+   {c:'data', x:'Coordinate with Math Coordinator: build MAP Fall Administration schedule (window: Aug 10–28)'},
+   {c:'data', x:'Update NWEA rosters with 2026–27 student data; reserve computers for Aug 10–28 MAP window'},
+   {c:'data', x:'Set up BOY Dyslexia Screener testing window in AMIRA for grades K–3'},
+   {c:'data', x:'Prepare logistics for GKIDS Readiness Check (K only, Aug 3–Sep 11) and ongoing GKIDS (K, ongoing)'},
+   {c:'data', x:'Prepare logistics for Pre-TLP Tests (K–7, Aug 31–Sep 18); coordinate with target language teachers'},
+   {c:'mtg',  x:'Schedule recurring weekly ESOL teacher meetings (standing day/time before school starts)'},
+   {c:'mtg',  x:'Schedule recurring biweekly meetings with each grade-level planning team (K–5 + middle school)'},
+   {c:'pd',   x:'Prepare agendas for new employee preplanning (Jul 23–24) and all-staff preplanning (Jul 27–31)'},
+   {c:'acad', x:'Academic Committee — Jul 24 (6:30pm): prepare any program updates or curriculum items'},
+  ]},
+  {n:'August',d:'Orientation Aug 3 · Preplanning Aug 3–4 · First day Aug 5 · GKIDS Readiness Check Aug 3–Sep 11 · MAP Fall Aug 10–28 · 19 instructional days',t:[
+   {c:'pd',   x:'During preplanning (Aug 3–4): train new teachers on MAP, NWEA platform, AMIRA, and GKIDS procedures'},
+   {c:'data', x:'GKIDS Readiness Check opens Aug 3 (K); confirm K teachers are ready to administer through Sep 11'},
+   {c:'data', x:'Open MAP Fall Administration Aug 10; confirm computer lab reservations and rosters are set'},
+   {c:'data', x:'Open BOY Dyslexia Screener window in AMIRA; confirm K–3 teachers are administering'},
+   {c:'esol', x:'ESOL Screener (K–7): ongoing — verify new enrollees are screened within 30-day window',ga:1},
+   {c:'esol', x:'Verify HLS is embedded in enrollment process; translations available for families',ga:1},
+   {c:'family',x:'Host family orientation night'},
+   {c:'esol', x:'Initiate ESOL service plans; send parent notifications within 30 days of school year start',ga:1},
+   {c:'ela',  x:'Launch ELA small group intervention rosters; confirm pacing'},
+   {c:'sched',x:'Confirm ESOL instructional delivery schedule meets GaDOE Rule 160-45-.02 minimums',ga:1},
+   {c:'pd',   x:'Demo lesson: Kindergarten (first 6 weeks window Aug 5–Sep 12)'},
+   {c:'pd',   x:'Demo lesson: Grade 1 (first 6 weeks window Aug 5–Sep 12)'},
+   {c:'board',x:'Governing Board — Aug 6 (6:30pm): attend; share program launch update if on agenda'},
+   {c:'acad', x:'Academic Committee — Aug 28 (6:30pm): note — MAP Fall window closes Aug 28; present testing plan update'},
+  ]},
+  {n:'September',d:'Labor Day Sep 7 · Pre-TLP Tests Aug 31–Sep 18 · GKIDS Readiness Check closes Sep 11 · ILD#1 Sep 18 · Gifted ID begins Sep 28 · 21 instructional days',t:[
+   {c:'pd',   x:'Demo lesson: Grade 2 — complete by end of 6-week window (~Sep 12)'},
+   {c:'pd',   x:'Demo lesson: Grade 3 — complete by end of 6-week window (~Sep 12)'},
+   {c:'pd',   x:'Demo lesson: Grade 4 — complete by end of 6-week window (~Sep 12)'},
+   {c:'pd',   x:'Demo lesson: Grade 5 — complete by end of 6-week window (~Sep 12)'},
+   {c:'pd',   x:'Demo lesson: Middle School — complete by end of 6-week window (~Sep 12)'},
+   {c:'data', x:'Close MAP Fall Administration (closes Aug 28); pull BOY MAP reports and compile data for teams'},
+   {c:'data', x:'Close GKIDS Readiness Check window Sep 11; review K results with Kindergarten teachers'},
+   {c:'data', x:'Monitor Pre-TLP Tests (Aug 31–Sep 18, K–7); support target language teachers with administration'},
+   {c:'data', x:'Close BOY Dyslexia Screener window; review AMIRA results for K–3; flag students needing support'},
+   {c:'data', x:'Gifted Identification Process begins Sep 28 (grades 2–7, runs through Jan 29, 2027) — confirm referral procedures are in place'},
+   {c:'data', x:'Complete BOY EL screeners; enter results in GUIDE/SLDS',ga:1},
+   {c:'esol', x:'Finalize 30-day EL identification and parent notification compliance for Aug 5 enrollees',ga:1},
+   {c:'esol', x:'Report all EL statuses in state SIS',ga:1},
+   {c:'esol', x:'Munch n Learn state check-in — September'},
+   {c:'family',x:'ESOL family welcome workshop'},
+   {c:'pd',   x:'Use ILD#1 (Sep 18) for coaching debrief; review MAP Fall, Pre-TLP, and Dyslexia Screener BOY data with teachers'},
+   {c:'esol', x:'Review transfer student EL records in GUIDE/SLDS; honor prior EL classifications',ga:1},
+   {c:'board',x:'Governing Board — Sep 3 (6:30pm): prepare BOY assessment summary if presenting data'},
+   {c:'acad', x:'Academic Committee — Sep 25 (6:30pm): present MAP Fall results, Pre-TLP data, and Dyslexia Screener BOY results'},
+  ]},
+ ]},
+ {q:2,lbl:'Q2',focus:'FTE reporting, Q1 walkthrough, Gifted ID, Dyslexia MOY, PSAT & Semester 1 close-out',months:[
+  {n:'October',d:'PSAT Oct 27 (Grade 8) · Fall Break Oct 12–16 · Parent Conferences Oct 22–23 · Gifted ID ongoing · 15 instructional days',t:[
+   {c:'esol', x:'FTE reporting window: verify all EL and ESOL student counts are accurate in SIS before FTE submission deadline'},
+   {c:'esol', x:'Reconcile ESOL service rosters with FTE data; coordinate with admin on any discrepancies'},
+   {c:'pd',   x:'Q1 ELA walkthrough cycle: schedule and complete glows & grows for all 17 ELA classes before end of October'},
+   {c:'esol', x:'Send end-of-Q1 monitored ESOL student feedback email to teachers; collect responses and update records'},
+   {c:'data', x:'PSAT — Oct 27 (Grade 8): confirm 8th grade EL accommodations are documented and in place'},
+   {c:'data', x:'Analyze BOY MAP Fall data; share reports and discuss implications with grade-level teams'},
+   {c:'pd',   x:'Coaching cycles: classroom observations and debrief sessions'},
+   {c:'esol', x:'Submit Q1 ESOL compliance documentation'},
+   {c:'esol', x:'Munch n Learn state check-in — October'},
+   {c:'family',x:'Parent conferences Oct 22–23 — ESOL family outreach and EL progress prep'},
+   {c:'esol', x:'Ensure annual parent written notification of EL status is complete and filed',ga:1},
+   {c:'board',x:'Governing Board — Oct 1 (6:30pm): attend; prepare any Q1 ELA/ESOL program updates if on agenda'},
+   {c:'acad', x:'Academic Committee — Oct 22 (6:30pm): note — same day as parent conferences; prep EL and ELA data overview in advance'},
+  ]},
+  {n:'November',d:'ILD#2 Nov 6 (students at home) · Thanksgiving Break Nov 23–27 · Gifted ID ongoing (through Jan 29) · 16 instructional days',t:[
+   {c:'data', x:'Set up and open MOY Dyslexia Screener window in AMIRA for grades K–3'},
+   {c:'data', x:'Monitor MOY Dyslexia Screener administration; confirm K–3 teachers are on schedule'},
+   {c:'data', x:'Review mid-semester progress monitoring data; adjust intervention groups'},
+   {c:'pd',   x:'Use ILD#2 (Nov 6) for ELA collaborative planning; review early MOY Dyslexia Screener data'},
+   {c:'esol', x:'Collect signed Parent Waiver Forms for families opting out of ESOL services',ga:1},
+   {c:'esol', x:'Document support plans for opted-out ELs; maintain in permanent files',ga:1},
+   {c:'esol', x:'Munch n Learn state check-in — November'},
+   {c:'family',x:'ESOL family workshop: literacy strategies at home'},
+   {c:'board',x:'Governing Board — Nov 5 (6:30pm): attend; bring any intervention or program update if needed'},
+   {c:'acad', x:'Academic Committee — Nov 19 (6:30pm): bring early MOY Dyslexia Screener results; note — week before Thanksgiving break'},
+  ]},
+  {n:'December',d:'End of Semester 1: Dec 18 · Winter Break Dec 21–31 · 14 instructional days',t:[
+   {c:'data', x:'Close MOY Dyslexia Screener window; review AMIRA results for K–3; update support groups'},
+   {c:'pd',   x:'Q2 ELA walkthrough cycle: schedule and complete glows & grows for all 17 ELA classes before Dec 18'},
+   {c:'esol', x:'Send end-of-Q2 monitored ESOL student feedback email to teachers; collect responses and update records'},
+   {c:'ela',  x:'Mid-year ELA curriculum audit and gap analysis before semester end (Dec 18)'},
+   {c:'esol', x:'Update ESOL compliance records and service hours log for Semester 1'},
+   {c:'data', x:'Close out Semester 1: compile benchmark scores, update student records'},
+   {c:'esol', x:'Munch n Learn state check-in — December'},
+   {c:'esol', x:'Confirm progress monitoring is documented for opted-out ELs',ga:1},
+   {c:'sched',x:'Draft spring semester ESOL and intervention schedule adjustments'},
+   {c:'board',x:'Governing Board — Dec 4 (6:30pm): prepare Semester 1 ELA/ESOL data summary; share MOY Dyslexia Screener results if requested'},
+   {c:'acad', x:'Academic Committee — Dec 18 (6:30pm): note — last day of Semester 1; present MOY Dyslexia Screener K–3 results'},
+  ]},
+ ]},
+ {q:3,lbl:'Q3',focus:'ACCESS Jan–Feb, MAP Winter Jan 7–23, Mid-TLP Feb 8–26, Gifted ID Grade 1, textbook order',months:[
+  {n:'January',d:'Preplanning Jan 4 · Semester 2 begins Jan 5 · MLK Day Jan 18 · MAP Winter Jan 7–23 · ACCESS Jan 4–Feb 22 · Gifted ID (Gr 2–7) closes Jan 29 · Gifted ID (Gr 1) begins Jan 29',t:[
+   {c:'data', x:'MAP Winter Administration opens Jan 7 (K–7, closes Jan 23): confirm NWEA rosters and computer lab reservations'},
+   {c:'data', x:'ACCESS testing window opens Jan 4 (K–7, closes Feb 22): confirm all ELs rostered including opt-outs',ga:1},
+   {c:'data', x:'Gifted Identification Process (Gr 2–7) closes Jan 29 — confirm all referrals and data submissions are complete'},
+   {c:'data', x:'Gifted Identification Process (Gr 1) begins Jan 29 through Apr 2 — confirm referral process is ready'},
+   {c:'pd',   x:'Lead Semester 2 kickoff PD (Jan 4): review MOY Dyslexia Screener data and MAP Winter plan; adjust instructional groups'},
+   {c:'sched',x:'Confirm updated ESOL service schedules for Semester 2 starting Jan 5'},
+   {c:'esol', x:'Munch n Learn state check-in — January'},
+   {c:'esol', x:'Verify ACCESS accommodations are documented in IEPs/504s; coordinate with Special Ed',ga:1},
+   {c:'board',x:'Governing Board — Jan 7 (6:30pm): note — MAP Winter opens today; attend and share Semester 2 plan'},
+   {c:'acad', x:'Academic Committee — Jan 28 (6:30pm): present MAP Winter mid-window update; discuss ACCESS testing launch'},
+  ]},
+  {n:'February',d:'ILD#3 Feb 5 · Student/Teacher Holiday Feb 12–16 · ACCESS closes Feb 22 · Mid-year TLP Tests Feb 8–26 · 17 instructional days',t:[
+   {c:'ela',  x:'⚑ Textbook order deadline: compile ELA textbook needs and submit numbers for board budget vote',dl:1},
+   {c:'board',x:'Governing Board — Feb 5 (6:30pm): ⚑ present textbook order numbers for board budget vote'},
+   {c:'data', x:'MAP Winter Administration closes Jan 23: pull reports and share mid-year MAP data with grade-level teams'},
+   {c:'data', x:'Mid-year TLP Tests (Vocabulary & Reading, K–7) Feb 8–26: support target language teachers with administration and logistics'},
+   {c:'data', x:'ACCESS testing window closes Feb 22: monitor completion, ensure all ELs tested, confirm accommodations met',ga:1},
+   {c:'pd',   x:'Q3 ELA walkthrough cycle: schedule and complete glows & grows for all 17 ELA classes — use Feb 12–16 break for write-ups'},
+   {c:'ela',  x:'Use Feb 12–16 break to finalize ELA curriculum pacing review and spring unit planning'},
+   {c:'pd',   x:'Use ILD#3 (Feb 5) for coaching debrief and ACCESS/TLP prep with teachers — note: also board meeting night'},
+   {c:'esol', x:'Munch n Learn state check-in — February'},
+   {c:'family',x:'Family engagement event: biliteracy showcase'},
+   {c:'acad', x:'Academic Committee — Feb 26 (6:30pm): note — Mid-TLP Tests close today; present MAP Winter results and ACCESS completion update'},
+  ]},
+  {n:'March',d:'Parent Conference Day Mar 12 · ILD#4 Mar 19 · 22 instructional days',t:[
+   {c:'esol', x:'Send end-of-Q3 monitored ESOL student feedback email to teachers; collect responses and update records'},
+   {c:'data', x:'Review ACCESS scores; begin applying GaDOE exit/reclassification criteria (CPL > 5.0 required exit)',ga:1},
+   {c:'esol', x:'Submit Q3 ESOL compliance report to GaDOE',ga:1},
+   {c:'esol', x:'Munch n Learn state check-in — March'},
+   {c:'family',x:'Parent conferences Mar 12 — prepare EL student progress summaries for families'},
+   {c:'pd',   x:'Use ILD#4 (Mar 19) for data-driven differentiation planning; review ACCESS results and Mid-TLP data'},
+   {c:'ela',  x:'Launch spring ELA units; confirm pacing with grade-level teams'},
+   {c:'board',x:'Governing Board — Mar 4 (6:30pm): attend; share ACCESS completion update and Mid-TLP preliminary results'},
+   {c:'acad', x:'Academic Committee — Mar 25 (6:30pm): present ACCESS reclassification data and spring Georgia Milestones prep plan'},
+  ]},
+ ]},
+ {q:4,lbl:'Q4 & Close-out',focus:'Georgia Milestones Apr 9–30, Post-TLP & MAP Spring May 3–14, EOY close-out & 2027–28 prep',months:[
+  {n:'April',d:'Spring Break Apr 5–9 · Georgia Milestones Apr 9–30 (Gr 3–7) · Gifted ID Gr 1 closes Apr 2 · 17 instructional days',t:[
+   {c:'data', x:'Gifted Identification Process (Gr 1) closes Apr 2 — confirm all data submissions are complete'},
+   {c:'data', x:'Georgia Milestones Apr 9–30 (Gr 3–7): confirm EL accommodations are in place per IEPs/504s',ga:1},
+   {c:'esol', x:'Complete EL Reclassification Forms for qualifying students; update EL status in SIS',ga:1},
+   {c:'data', x:'Set up EOY Dyslexia Screener window in AMIRA for grades K–3'},
+   {c:'data', x:'Coordinate with Math Coordinator: confirm MAP Spring schedule (May 3–14); update NWEA rosters'},
+   {c:'sched',x:'Begin building 2027–28 master schedule and staffing plan'},
+   {c:'ela',  x:'Support Gr 3–7 teachers with ELA Milestones prep during Apr 9–30 window'},
+   {c:'pd',   x:'Spring coaching cycles: focus on language-rich test prep strategies'},
+   {c:'esol', x:'Munch n Learn state check-in — April'},
+   {c:'board',x:'Governing Board — Apr 2 (6:30pm): note — week before spring break; present ACCESS reclassification results'},
+   {c:'acad', x:'Academic Committee — Apr 23 (6:30pm): update on Georgia Milestones mid-window; preview Post-TLP and MAP Spring plan'},
+  ]},
+  {n:'May',d:'Post-TLP Tests May 3–14 · MAP Spring May 3–14 · Last day May 26 · Post-planning May 27–28 · Memorial Day May 31',t:[
+   {c:'data', x:'Post-TLP Tests (K–7) May 3–14: support target language teachers; compare to Pre-TLP for growth data'},
+   {c:'data', x:'MAP Spring Administration (K–7) May 3–14: open window, confirm computer reservations, monitor testing'},
+   {c:'data', x:'Open EOY Dyslexia Screener window in AMIRA; confirm K–3 teachers are administering'},
+   {c:'data', x:'Close MAP Spring window May 14; pull EOY MAP reports and compile year-over-year growth data'},
+   {c:'data', x:'Close EOY Dyslexia Screener window; compile full-year AMIRA results for K–3; share with teachers and admin'},
+   {c:'pd',   x:'Q4 ELA walkthrough cycle: schedule and complete glows & grows for all 17 ELA classes before May 26'},
+   {c:'esol', x:'Send end-of-Q4 monitored ESOL student feedback email to teachers; collect responses and file in student records'},
+   {c:'data', x:'Administer EOY benchmarks and writing assessments'},
+   {c:'esol', x:'Complete annual ESOL student progress reports before May 26',ga:1},
+   {c:'esol', x:'Munch n Learn state check-in — May'},
+   {c:'family',x:'Host end-of-year Biliteracy Celebration for families'},
+   {c:'ela',  x:'EOY ELA curriculum review: what worked, what to revise'},
+   {c:'esol', x:'Monitor ELPAP rate — flag if approaching below 95% threshold',ga:1},
+   {c:'pd',   x:'Post-planning (May 27–28): year-end reflection and 2027–28 PD planning; review Pre-TLP vs Post-TLP growth'},
+   {c:'board',x:'Governing Board — May 7 (6:30pm): present EOY data preview and program recommendations for 2027–28'},
+   {c:'acad', x:'Academic Committee — May 28 (6:30pm): present MAP Spring, Post-TLP, and Dyslexia Screener EOY results; full-year ELA summary'},
+  ]},
+  {n:'June \/ July',d:'YHALE Summer Camp Jul 7–30 · You continue working through July',t:[
+   {c:'esol', x:'Submit final year-end ESOL compliance documentation to GaDOE',ga:1},
+   {c:'data', x:'Finalize ACCESS reclassification decisions; update GUIDE/SLDS for all exited ELs',ga:1},
+   {c:'esol', x:'Munch n Learn state check-in — June'},
+   {c:'pd',   x:'Year-end teacher feedback survey; design 2027–28 PD calendar (include MAP, TLP, AMIRA, and GKIDS training plan)'},
+   {c:'esol', x:'Ensure all permanent records contain: signed HLS, WIDA Score Reports, parent notifications, ACCESS results',ga:1},
+   {c:'data', x:'Compile full-year assessment summary: MAP (Fall/Winter/Spring), Pre/Post-TLP, ACCESS, Dyslexia Screener, Georgia Milestones EL data'},
+   {c:'data', x:'Review full-year AMIRA data across K–3; identify students for targeted support in 2027–28'},
+   {c:'sched',x:'Finalize 2027–28 master schedule, ESOL staffing, and intervention blocks'},
+   {c:'ela',  x:'Update ELA curriculum documents and pacing guides for 2027–28'},
+   {c:'esol', x:'Prepare ESOL rosters and materials for fall; confirm HLS process ready for new enrollees',ga:1},
+   {c:'esol', x:'Ensure all TAs renew WIDA Screener certification before Jul 1 cycle deadline',ga:1},
+   {c:'mtg',  x:'Re-schedule and confirm all recurring meetings (ESOL weekly, grade-level biweekly) for 2027–28'},
+   {c:'board',x:'Governing Board — Jun 4 (6:30pm): present year-end ELA/ESOL/MAP/TLP summary and 2027–28 program recommendations'},
+   {c:'acad', x:'Academic Committee — Jun 25 (6:30pm): year-end review; finalize academic priorities and curriculum goals for 2027–28'},
+   {c:'board',x:'Governing Board — Jul 1 (6:30pm): bring any 2027–28 planning items — staffing, curriculum purchases, AMIRA renewal'},
+   {c:'acad', x:'Academic Committee — Jul 23 (6:30pm): preview 2027–28 plans; confirm MAP, TLP, AMIRA, and ESOL readiness before August'},
+  ]},
+ ]},
+];
+
+// ── State (localStorage for persistence) ────────────────────────────────
+var STORE_KEY = 'yhale-planner-2026-27';
+var state = {};
+try {
+  var saved = localStorage.getItem(STORE_KEY);
+  if (saved) state = JSON.parse(saved);
+} catch(e) {}
+DATA.forEach(function(q){q.months.forEach(function(m,mi){m.t.forEach(function(_,ti){
+  var k='q'+q.q+'-m'+mi+'-t'+ti;
+  if(state[k]===undefined) state[k]=false;
+});});});
+function saveState(){ try{ localStorage.setItem(STORE_KEY, JSON.stringify(state)); }catch(e){} }
+
+var cQ=1;
+
+// ── Render ───────────────────────────────────────────────────────────────
+function render(){ renderTabs(); renderProgress(); renderMonths(); }
+
+function renderTabs(){
+  var el=document.getElementById('tabsWrap');
+  el.innerHTML=DATA.map(function(q){
+    return '<button class="qtab'+(q.q===cQ?' active':'')+'" onclick="setQ('+q.q+')">'+q.lbl+'</button>';
+  }).join('');
+}
+
+function renderProgress(){
+  var qd=DATA[cQ-1], total=0, done=0, ga=0;
+  qd.months.forEach(function(m,mi){m.t.forEach(function(t,ti){
+    total++; if(state['q'+qd.q+'-m'+mi+'-t'+ti]) done++; if(t.ga) ga++;
+  });});
+  var pct=total?Math.round(done/total*100):0;
+  document.getElementById('qFocus').textContent=qd.focus;
+  document.getElementById('progStrip').innerHTML=
+    '<div class="prog-card"><div class="prog-label">Total tasks</div><div class="prog-val">'+total+'</div></div>'+
+    '<div class="prog-card"><div class="prog-label">Completed</div><div class="prog-val gold">'+done+'</div></div>'+
+    '<div class="prog-card"><div class="prog-label">Progress</div><div class="prog-val">'+pct+'%</div><div class="prog-bar-wrap"><div class="prog-bar-fill" style="width:'+pct+'%"></div></div></div>'+
+    '<div class="prog-card"><div class="prog-label">GA required</div><div class="prog-val" style="color:#f8d7da">'+ga+'</div></div>';
+}
+
+function taskHTML(t,key){
+  var isDone=state[key];
+  var ci=CAT[t.c]||{l:t.c,c:'badge-sched'};
+  var gaTag=t.ga?'<span class="badge badge-ga">GA</span>':'';
+  var dlTag=t.dl?'<span class="badge-deadline">⚑ deadline</span>':'';
+  return '<div class="task-item" onclick="toggle(\''+key+'\')">'+
+    '<div class="task-cb'+(isDone?' done':'')+'"></div>'+
+    '<div class="task-body">'+
+      '<div class="task-badges"><span class="badge '+ci.c+'">'+ci.l+'</span>'+gaTag+dlTag+'</div>'+
+      '<div class="task-text'+(isDone?' done':'')+'">'+t.x+'</div>'+
+    '</div></div>';
+}
+
+function renderMonths(){
+  var qd=DATA[cQ-1];
+  document.getElementById('monthsGrid').innerHTML=qd.months.map(function(m,mi){
+    var mtg=MTG[m.n]||{b:0,a:0};
+    var pills='';
+    if(mtg.b||mtg.a){
+      pills='<div class="mtg-pills">';
+      if(mtg.b) pills+='<span class="mtg-pill mpb">Board: '+m.n.slice(0,3)+' '+mtg.b+' @ 6:30pm</span>';
+      if(mtg.a) pills+='<span class="mtg-pill mpa">Acad Cmte: '+m.n.slice(0,3)+' '+mtg.a+' @ 6:30pm</span>';
+      pills+='</div>';
+    }
+    var items=m.t.map(function(t,ti){return taskHTML(t,'q'+qd.q+'-m'+mi+'-t'+ti);}).join('');
+    var aid='add-'+qd.q+'-'+mi;
+    var opts=Object.keys(CAT).map(function(k){return '<option value="'+k+'">'+CAT[k].l+'</option>';}).join('');
+    return '<div class="month-col">'+
+      '<div class="month-header"><div class="month-name">'+m.n+'</div><div class="month-sub">'+m.d+'</div></div>'+
+      pills+
+      '<div class="tasks-wrap" id="tasks-'+qd.q+'-'+mi+'">'+items+'</div>'+
+      '<div class="add-row">'+
+        '<input id="'+aid+'-txt" placeholder="Add task..." />'+
+        '<select id="'+aid+'-cat">'+opts+'</select>'+
+        '<button onclick="addTask('+qd.q+','+mi+',\''+aid+'\')">+</button>'+
+      '</div>'+
+    '</div>';
+  }).join('');
+}
+
+function setQ(q){ cQ=q; render(); }
+
+function toggle(key){
+  state[key]=!state[key];
+  saveState();
+  renderProgress();
+  rerenderTasks();
+}
+
+function rerenderTasks(){
+  var qd=DATA[cQ-1];
+  qd.months.forEach(function(m,mi){
+    var c=document.getElementById('tasks-'+qd.q+'-'+mi);
+    if(!c) return;
+    c.innerHTML=m.t.map(function(t,ti){return taskHTML(t,'q'+qd.q+'-m'+mi+'-t'+ti);}).join('');
+  });
+}
+
+function addTask(q,mi,aid){
+  var txt=document.getElementById(aid+'-txt').value.trim();
+  var cat=document.getElementById(aid+'-cat').value;
+  if(!txt) return;
+  var qd=DATA.filter(function(d){return d.q===q;})[0];
+  var ti=qd.months[mi].t.length;
+  qd.months[mi].t.push({c:cat,x:txt});
+  state['q'+q+'-m'+mi+'-t'+ti]=false;
+  document.getElementById(aid+'-txt').value='';
+  saveState();
+  renderProgress();
+  rerenderTasks();
+}
+
+render();
+</script>
+</body>
+</html>
